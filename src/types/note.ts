@@ -6,3 +6,9 @@ export interface Note {
   content: string;
   tag?: NoteTag;
 }
+
+export interface NewNode {
+  title: string;
+  content: string;
+  tag?: NoteTag;
+}
