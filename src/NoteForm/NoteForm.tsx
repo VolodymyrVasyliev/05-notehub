@@ -14,7 +14,7 @@ export default function NoteForm({ onSuccess }: NoteFormProps) {
   <div className={css.formGroup}>
     <label htmlFor={`${idUse}-title`}>Title</label>
     <input id={`${idUse}-title`} type="text" name="title" className={css.input} />
-    <span name="title" className={css.error} />
+    {/* <span name="title" className={css.error} /> */}
   </div>
 
   <div className={css.formGroup}>
@@ -25,7 +25,7 @@ export default function NoteForm({ onSuccess }: NoteFormProps) {
       rows={8}
       className={css.textarea}
     />
-    <span name="content" className={css.error} />
+    {/* <span name="content" className={css.error} /> */}
   </div>
 
   <div className={css.formGroup}>
@@ -37,7 +37,7 @@ export default function NoteForm({ onSuccess }: NoteFormProps) {
       <option value="Meeting">Meeting</option>
       <option value="Shopping">Shopping</option>
     </select>
-    <span name="tag" className={css.error} />
+    {/* <span name="tag" className={css.error} /> */}
   </div>
 
   <div className={css.actions}>
