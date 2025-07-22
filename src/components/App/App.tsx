@@ -6,7 +6,6 @@ import NoteList from "../NoteList/NoteList";
 import SearchBox from "../SearchBox/SearchBox";
 import Modal from "../Modal/Modal";
 import NoteForm from "../../NoteForm/NoteForm";
-import type { Note } from "../../types/note";
 // import ReactPaginate from "react-paginate";
 
 function App() {
@@ -16,9 +15,9 @@ function App() {
 
   // const [currentPage, setCurrentPage] = useState(1);
   
-  const { data, isLoading } = useQuery<Note[]>({
+  const { data, isLoading } = useQuery({
     queryKey: ["notes"],
-    queryFn: fetchNotes,
+    queryFn: () => fetchNotes(),
     placeholderData: keepPreviousData,
     
   });
@@ -30,8 +29,12 @@ function App() {
     <>
       <div className={css.app}>
         <header className={css.toolbar}>
+          <SearchBox/>
+          <button className={css.button} onClick={openModal}>
+            Create note +
+          </button>
+          </header>
           {data && !isLoading && <NoteList notes={data.notes} />}
-          <SearchBox />
 
           {/* <ReactPaginate
             pageCount={totalPages}
@@ -45,15 +48,11 @@ function App() {
             previousLabel="←"
             renderOnZeroPageCount={null}
           /> */}
-          <button className={css.button} onClick={openModal}>
-            Create note +
-          </button>
           {isModalOpen && (
             <Modal onClose={() => closeModal()}>
               <NoteForm onSuccess={closeModal} />
             </Modal>
           )}
-        </header>
       </div>
     </>
   );
