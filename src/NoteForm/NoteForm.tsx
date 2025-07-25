@@ -1,57 +1,115 @@
 import css from "./NoteForm.module.css";
 import { useId } from "react";
+import { Formik, Form, Field, ErrorMessage, type FormikHelpers } from "formik";
+import { type NewNote } from "../types/note";
+import * as Yup from "yup";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { createNote } from "../services/noteServise";
 
 interface NoteFormProps {
-  onSuccess: () => void;
-} 
+  onCloseModal: () => void;
+}
 
-export default function NoteForm({ onSuccess }: NoteFormProps) {
-  
+interface FormValues {
+  title: string;
+  content: string;
+  tag: "Todo" | "Work" | "Personal" | "Meeting" | "Shopping";
+}
+
+const NoteSchema = Yup.object().shape({
+  title: Yup.string()
+    .min(3, "Too Short!")
+    .max(50, "Too Long!")
+    .required("Required field"),
+  content: Yup.string().max(500, "Too Long!"),
+  tag: Yup.string().oneOf(["Todo", "Work", "Personal", "Meeting", "Shopping"]),
+});
+
+export default function NoteForm({ onCloseModal }: NoteFormProps) {
   const idUse = useId();
 
+  const queryClient = useQueryClient();
+
+  const { mutate, isPending } = useMutation({
+    mutationFn: (noteData: NewNote) => createNote(noteData),
+    onSuccess() {
+      queryClient.invalidateQueries({ queryKey: ["notes"] });
+      onCloseModal();
+    },
+  });
+
+  const handleSubmit = (
+    values: FormValues,
+    formikHelper: FormikHelpers<FormValues>
+  ) => {
+    formikHelper.resetForm();
+    mutate(values);
+  };
+
   return (
-   <form className={css.form}>
-  <div className={css.formGroup}>
-    <label htmlFor={`${idUse}-title`}>Title</label>
-    <input id={`${idUse}-title`} type="text" name="title" className={css.input} />
-    {/* <span name="title" className={css.error} /> */}
-  </div>
-
-  <div className={css.formGroup}>
-    <label htmlFor={`${idUse}-content`}>Content</label>
-    <textarea
-      id={`${idUse}content`}
-      name="content"
-      rows={8}
-      className={css.textarea}
-    />
-    {/* <span name="content" className={css.error} /> */}
-  </div>
-
-  <div className={css.formGroup}>
-    <label htmlFor={`${idUse}-tag`}>Tag</label>
-    <select id={`${idUse}-tag`} name="tag" className={css.select}>
-      <option value="Todo">Todo</option>
-      <option value="Work">Work</option>
-      <option value="Personal">Personal</option>
-      <option value="Meeting">Meeting</option>
-      <option value="Shopping">Shopping</option>
-    </select>
-    {/* <span name="tag" className={css.error} /> */}
-  </div>
-
-  <div className={css.actions}>
-    <button type="button" className={css.cancelButton} onClick={onSuccess}>
-      Cancel
-    </button>
-    <button
-      type="submit"
-      className={css.submitButton}
-    //   disabled=false
+    <Formik
+      initialValues={{ title: "", content: "", tag: "Todo" }}
+      onSubmit={handleSubmit}
+      validationSchema={NoteSchema}
     >
-      Create note
-    </button>
-  </div>
-</form>
-  )
+      <Form className={css.form}>
+        <div className={css.formGroup}>
+          <label htmlFor={`${idUse}-title`}>Title</label>
+          <Field
+            id={`${idUse}-title`}
+            type="text"
+            name="title"
+            className={css.input}
+          />
+          {<ErrorMessage name="title" component="span" className={css.error} />}
+        </div>
+
+        <div className={css.formGroup}>
+          <label htmlFor={`${idUse}-content`}>Content</label>
+          <Field
+            as="textarea"
+            id={`${idUse}content`}
+            name="content"
+            rows={8}
+            className={css.textarea}
+          />
+          {<ErrorMessage name="title" component="span" className={css.error} />}
+        </div>
+
+        <div className={css.formGroup}>
+          <label htmlFor={`${idUse}-tag`}>Tag</label>
+          <Field
+            as="select"
+            id={`${idUse}-tag`}
+            name="tag"
+            className={css.select}
+          >
+            <option value="Todo">Todo</option>
+            <option value="Work">Work</option>
+            <option value="Personal">Personal</option>
+            <option value="Meeting">Meeting</option>
+            <option value="Shopping">Shopping</option>
+          </Field>
+          {<ErrorMessage name="title" component="span" className={css.error} />}
+        </div>
+
+        <div className={css.actions}>
+          <button
+            type="button"
+            className={css.cancelButton}
+            onClick={onCloseModal}
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            className={css.submitButton}
+            disabled={isPending}
+          >
+            {isPending ? "Creating new note..." : "Create note"}
+          </button>
+        </div>
+      </Form>
+    </Formik>
+  );
 }
