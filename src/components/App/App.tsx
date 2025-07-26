@@ -1,4 +1,4 @@
-import { useState } from "react";
+import {  useState } from "react";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import css from "./App.module.css";
 import { fetchNotes } from "../../services/noteServise";
@@ -7,6 +7,7 @@ import SearchBox from "../SearchBox/SearchBox";
 import Modal from "../Modal/Modal";
 import NoteForm from "../../NoteForm/NoteForm";
 import Pagination from "../Pagination/Pagination";
+import { useDebouncedCallback } from "use-debounce";
 
 function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -14,12 +15,25 @@ function App() {
   const closeModal = () => setIsModalOpen(false);
 
   const [currentPage, setCurrentPage] = useState(1);
+  
+  const [inputVailue, setInputeValue] = useState("");
 
-  const { data, isLoading } = useQuery({
-    queryKey: ["notes", currentPage],
-    queryFn: () => fetchNotes(currentPage),
+
+
+  const updeteSearch = useDebouncedCallback((newSearchQuery:string) => {
+    setInputeValue(newSearchQuery);
+    setCurrentPage(1);
+  }, 300)
+
+  
+  
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["notes", currentPage, inputVailue],
+    queryFn: () => fetchNotes(currentPage, inputVailue),
     placeholderData: keepPreviousData,
   });
+  
+
 
   const totalPages = data?.totalPages ?? 0;
 
@@ -27,7 +41,7 @@ function App() {
     <>
       <div className={css.app}>
         <header className={css.toolbar}>
-          <SearchBox />
+          <SearchBox value={inputVailue} onSearch={updeteSearch} />
 
           {totalPages > 0 && (
             <Pagination
@@ -42,7 +56,8 @@ function App() {
           </button>
         </header>
 
-        {isLoading && <p>loading notes...</p>}
+        {isLoading && <p className={css.loading}>loading notes...</p>}
+        {isError && <p className={css.error}>Server error. Sorry!</p>}
         {data && !isLoading && <NoteList notes={data.notes} />}
 
         {isModalOpen && (

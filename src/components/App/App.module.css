@@ -30,3 +30,33 @@
     background-color: #0b5ed7;
   }
   
+  /* loading and error style */
+
+
+.loading {
+  background-color: #e0f0ff;
+  color: #007bff;
+  border: 1px solid #90caff;
+  padding: 10px 16px;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 500;
+  width: fit-content;
+  animation: fadeInUp 0.4s ease-out forwards;
+  box-shadow: 0 2px 8px rgba(0, 123, 255, 0.2);
+ 
+}
+
+.error {
+  background-color: #ffe0e0;
+  color: #d10000;
+  border: 1px solid #ffa0a0;
+  padding: 10px 16px;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 500;
+  width: fit-content;
+  animation: fadeInUp 0.4s ease-out forwards;
+  box-shadow: 0 2px 8px rgba(209, 0, 0, 0.2);
+  
+}
