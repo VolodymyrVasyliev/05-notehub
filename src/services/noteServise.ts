@@ -7,18 +7,24 @@ interface feachNotesResponse {
 }
 const token = import.meta.env.VITE_NOTEHUB_TOKEN;
 
-export const fetchNotes = async (page: number, query:string) => {
+export const fetchNotes = async (page: number, query: string) => {
+  
+  const params: Record<string,string|number> = {
+    perPage: 10,
+    page,
+  };
+
+  if (query.trim() !== "") {
+    params.search = query;
+  }
+
   const response = await axios.get<feachNotesResponse>(
     'https://notehub-public.goit.study/api/notes',
     {
       headers: {
         Authorization: `Bearer ${token}`,
       },
-      params: {
-        perPage: 10,
-        page,
-        search: query,
-      },
+      params,
     }
   );
 
