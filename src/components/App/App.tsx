@@ -18,7 +18,7 @@ function App() {
 
   const [inputValue, setInputeValue] = useState("");
 
-  const updateSearch = useDebouncedCallback(setInputeValue, 1000);
+  const updateSearch = useDebouncedCallback(setInputeValue, 300);
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ["notes", currentPage, inputValue],
