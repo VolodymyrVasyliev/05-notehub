@@ -19,13 +19,14 @@ function App() {
   const [inputValue, setInputValue] = useState("");
   const [debouncedValue, setDebouncedValue] = useState("");
 
- const debouncedSearch = useDebouncedCallback((value: string) => {
-   setDebouncedValue(value);
-   setCurrentPage(1); 
- }, 300);
+  const debouncedSearch = useDebouncedCallback((value: string) => {
+    setDebouncedValue(value);
+    setCurrentPage(1);
+  }, 300);
+
   const handleSearchChange = (value: string) => {
-    setInputValue(value); 
-    debouncedSearch(value); 
+    setInputValue(value);
+    debouncedSearch(value);
   };
 
   const { data, isLoading, isError } = useQuery({
