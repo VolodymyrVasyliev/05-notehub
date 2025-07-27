@@ -22,8 +22,7 @@ const NoteSchema = Yup.object().shape({
     .max(50, "Too Long!")
     .required("Enter the note title"),
   content: Yup.string()
-    .max(500, "Too Long!")
-    .required("Enter the note content"),
+    .max(500, "Too Long!"),
   tag: Yup.string().oneOf(["Todo", "Work", "Personal", "Meeting", "Shopping"]),
 });
 
