@@ -20,8 +20,10 @@ const NoteSchema = Yup.object().shape({
   title: Yup.string()
     .min(3, "Too Short!")
     .max(50, "Too Long!")
-    .required("Required field"),
-  content: Yup.string().max(500, "Too Long!"),
+    .required("Enter the note title"),
+  content: Yup.string()
+    .max(500, "Too Long!")
+    .required("Enter the note content"),
   tag: Yup.string().oneOf(["Todo", "Work", "Personal", "Meeting", "Shopping"]),
 });
 
@@ -68,12 +70,18 @@ export default function NoteForm({ onCloseModal }: NoteFormProps) {
           <label htmlFor={`${idUse}-content`}>Content</label>
           <Field
             as="textarea"
-            id={`${idUse}content`}
+            id={`${idUse}-content`}
             name="content"
             rows={8}
             className={css.textarea}
           />
-          {<ErrorMessage name="title" component="span" className={css.error} />}
+          {
+            <ErrorMessage
+              name="content"
+              component="span"
+              className={css.error}
+            />
+          }
         </div>
 
         <div className={css.formGroup}>
@@ -90,7 +98,7 @@ export default function NoteForm({ onCloseModal }: NoteFormProps) {
             <option value="Meeting">Meeting</option>
             <option value="Shopping">Shopping</option>
           </Field>
-          {<ErrorMessage name="title" component="span" className={css.error} />}
+          {<ErrorMessage name="tag" component="span" className={css.error} />}
         </div>
 
         <div className={css.actions}>
