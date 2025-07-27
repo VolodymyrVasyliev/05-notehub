@@ -16,13 +16,21 @@ function App() {
 
   const [currentPage, setCurrentPage] = useState(1);
 
-  const [inputValue, setInputeValue] = useState("");
+  const [inputValue, setInputValue] = useState("");
+  const [debouncedValue, setDebouncedValue] = useState("");
 
-  const updateSearch = useDebouncedCallback(setInputeValue, 300);
+ const debouncedSearch = useDebouncedCallback((value: string) => {
+   setDebouncedValue(value);
+   setCurrentPage(1); 
+ }, 300);
+  const handleSearchChange = (value: string) => {
+    setInputValue(value); 
+    debouncedSearch(value); 
+  };
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: ["notes", currentPage, inputValue],
-    queryFn: () => fetchNotes(currentPage, inputValue),
+    queryKey: ["notes", currentPage, debouncedValue],
+    queryFn: () => fetchNotes(currentPage, debouncedValue),
     placeholderData: keepPreviousData,
   });
 
@@ -32,7 +40,7 @@ function App() {
     <>
       <div className={css.app}>
         <header className={css.toolbar}>
-          <SearchBox value={inputValue} onSearch={updateSearch} />
+          <SearchBox value={inputValue} onSearch={handleSearchChange} />
 
           {totalPages > 1 && (
             <Pagination
